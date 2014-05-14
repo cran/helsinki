@@ -1,35 +1,22 @@
+helsinki - Helsinki open data R tools
+========
+
+
 [![Build Status](https://api.travis-ci.org/rOpenGov/helsinki.png)](https://travis-ci.org/rOpenGov/helsinki)
-[![Stories in Ready](https://badge.waffle.io/ropengov/helsinki.png?label=TODO)](http://waffle.io/ropengov/helsinki)
+[![Stories in Ready](https://badge.waffle.io/ropengov/helsinki.png?label=Ready)](http://waffle.io/ropengov/helsinki)
 
+R tools for open data from the Helsinki region in Finland from the [rOpenGov](http://ropengov.github.io) project.   
 
-### Overview
+For installation and usage, check the [tutorial page](https://github.com/rOpenGov/helsinki/blob/master/vignettes/helsinki_tutorial.md). 
 
-  [helsinki](http://ropengov.github.com/helsinki) is a Helsinki open
-  data toolkit for [R](http://www.r-project.org) providing tools to
-  access, analyze and visualize Helsinki data resources. For details,
-  see the project homepage:
-  [http://ropengov.github.com/helsinki](http://ropengov.github.com/helsinki)
-
-### Contact
+Authors: [Juuso Parkkinen](https://github.com/ouzor),  [Leo Lahti](https://github.com/antagomir), [Joona Lehtomäki](https://github.com/jlehtoma)
   
-  [Homepage](http://ropengov.github.com/contact.html)
+You are welcome to contact us:
 
-  You are welcome to:
+* [submit suggestions and bug-reports](https://github.com/ropengov/helsinki/issues)
+* [send a pull request](https://github.com/ropengov/helsinki/)
+* public email list ropengov-forum@googlegroups.com
+* join IRC at ropengov@Freenode
+* follow us in [social media](http://ropengov.github.io/contribute/)  
   
-  * submit suggestions and bug-reports at: https://github.com/ropengov/helsinki/issues
-  * send a pull request on: https://github.com/ropengov/helsinki/
-  * compose a friendly e-mail to: louhos@googlegroups.com
-  * join our IRC channels at !louhos@IRCnet (Finland) and ropengov@Freenode (international)
-
-### Developers
-
-  We are greatful to a number of
-  [http://louhos.github.com/contact.html](contributors)! The main
-  admins are Leo Lahti, Juuso Parkkinen and Joona Lehtomäki.
-
-### License: FreeBSD
-
-  See the DESCRIPTION file
-  
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/fdfcd0ee746a540299b8f7be2833b93f "githalytics.com")](http://githalytics.com/ropengov/helsinki)
-
+[![githalytics.com alpha](https://cruel-carlota.gopagoda.com/1be3f84ba8e530528c296d1b4f749ab1 "githalytics.com")](http://githalytics.com/rOpenGov/helsinki)

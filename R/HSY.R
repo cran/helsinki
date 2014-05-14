@@ -1,9 +1,19 @@
+# This file is a part of the helsinki package (http://github.com/rOpenGov/helsinki)
+# in association with the rOpenGov project (ropengov.github.io)
 
-# The combination of some data and an aching desire for an answer does not
-# ensure that a reasonable answer can be extracted from a given body of
-# data. ~ John Tukey
+# Copyright (C) 2010-2014 Juuso Parkkinen, Leo Lahti and Joona Lehtomäki / Louhos <louhos.github.com>. 
+# All rights reserved.
 
-#' Retrieve HSY data 
+# This program is open source software; you can redistribute it and/or modify 
+# it under the terms of the FreeBSD License (keep this notice): 
+# http://en.wikipedia.org/wiki/BSD_licenses
+
+# This program is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+#' Retrieve data from Helsinki Region Environmental Services
 #'
 #' Retrieves data from Helsinki Region Environmental
 #' Services Authority (Helsingin seudun ymparistopalvelu HSY) 
@@ -12,23 +22,21 @@
 #' http://www.hsy.fi/seututieto/Documents/Paikkatiedot/Tietokuvaukset_kaikki.pdf. 
 #' The data copyright (C) HSY 2011.
 #'
-#' Arguments:
 #' @param which.data A string. Specify the name of the retrieved HSY data set. Options: Vaestotietoruudukko; Rakennustietoruudukko; SeutuRAMAVA_kosa; SeutuRAMAVA_tila. These are documented in HSY data description document (see above).
 #' @param which.year An integer. Specify the year for the data to be retrieved.
 #' @param data.dir A string. Specify a temporary folder for storing downloaded data.
+#' @param verbose logical. Should R report extra information on progress? 
 #'
 #' @return Shape object (from SpatialPolygonsDataFrame class)
+#' @import maptools
 #' @export
-#' @importFrom utils download.file
-#' @importFrom utils unzip
-#' @importFrom maptools readShapePoly
 #' @references See citation("helsinki") 
 #' @author Juuso Parkkinen and Leo Lahti \email{louhos@@googlegroups.com}
-#' @examples sp <- get_HSY_data("Vaestotietoruudukko")
+#' @examples \dontrun{ sp <- get_hsy("Vaestotietoruudukko") }
 #' @keywords utilities
 
-get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) {
-    
+get_hsy <- function (which.data=NULL, which.year=2013, data.dir=tempdir(), verbose=TRUE) {
+  
   if (is.null(which.data)) {
     message("Available HSY datasets:
   'Vaestotietoruudukko': Ruutukohtaista tietoa vaeston lukumaarasta, ikajakaumasta ja asumisvaljyydesta. Vuodet: 1997-2003, 2008-2013.
@@ -85,7 +93,7 @@ get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) 
   } else {
     stop("Invalid 'which.data' argument")
   }
-
+  
   # Download data
   if (which.data=="SeutuRAMAVA_kosa" & which.year==2010) {
     remote.zip <- paste0("http://www.hsy.fi/seututieto/Documents/Paikkatiedot/", zip.file) 
@@ -94,10 +102,12 @@ get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) 
   }
   local.zip <- file.path(data.dir, zip.file)
   if (!file.exists(local.zip)) {
-    message("Dowloading ", remote.zip, "\ninto ", local.zip, "\n")
-    utils::download.file(remote.zip, destfile = local.zip)
+    if (verbose)
+      message("Dowloading ", remote.zip, "\ninto ", local.zip, "\n")
+    utils::download.file(remote.zip, destfile = local.zip, quiet=!verbose)
   } else {
-    message("File ", local.zip, " already found, will not download again!")
+    if (verbose)
+      message("File ", local.zip, " already found, will not download again!")
   }  
   
   ## Process data -----------------------------------------------
@@ -107,21 +117,24 @@ get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) 
   
   # Define shapefile
   if (which.data=="Vaestotietoruudukko") {
-    message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/Vaestoruudukko.pdf")
+    if (verbose)
+      message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/Vaestoruudukko.pdf")
     if (which.year %in% c(2012, 2013))
       sp.file <- paste0(data.dir, "/Vaestotietoruudukko_", which.year, ".shp")
     else
       sp.file <- paste0(data.dir, "/Vaestoruudukko_", which.year, ".shp")
     
   } else if (which.data=="Rakennustietoruudukko") {
-    message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/Rakennustietoruudukko.pdf")
+    if (verbose)
+      message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/Rakennustietoruudukko.pdf")
     if (which.year==2012)
       sp.file <- paste0(data.dir, "/Rakennustitetoruudukko_", which.year, ".shp")
     else
       sp.file <- paste0(data.dir, "/Rakennustietoruudukko_", which.year, ".shp")
     
   } else if (which.data=="SeutuRAMAVA_kosa") {
-    message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/SeutuRAMAVA.pdf")
+    if (verbose) 
+      message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/SeutuRAMAVA.pdf")
     if (which.year==2013)
       sp.file <- paste0(data.dir, "/SeutuRamava_kosa_", which.year, ".shp")
     else if (which.year==2012)
@@ -130,7 +143,8 @@ get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) 
       sp.file <- paste0(data.dir, "/SeutuRAMAVA_", which.year, ".shp")
     
   } else if (which.data=="SeutuRAMAVA_tila") {
-    message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/SeutuRAMAVA.pdf")
+    if (verbose)
+      message("For detailed description of ", which.data, " see\nhttp://www.hsy.fi/seututieto/kaupunki/paikkatiedot/Documents/SeutuRAMAVA.pdf")
     if (which.year==2013)
       sp.file <- paste0(data.dir, "/SeutuRamava_tila_", which.year, ".shp")
     else if (which.year==2012)
@@ -138,13 +152,14 @@ get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) 
     else
       sp.file <- paste0(data.dir, "/SeutuRAMAVA_", which.year, "_SHP.shp")
   }
-
-  # Read shapefile
-  sp <- maptools::readShapePoly(sp.file)
   
+  # Read shapefile and add coordinate information manually (ETRS-GK25 -> EPSG:3879)
+  p4s <- "+init=epsg:3879 +proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+  sp <- maptools::readShapePoly(fn=sp.file, proj4string=CRS(p4s))
+    
   # Add KATAKER to rakennustieto, mailaa '11' SePe:lle
   if (which.data=="Rakennustietoruudukko") {
-    KATAKER.key <- kataker.key()
+    KATAKER.key <- kataker_key()
     kk.df <- data.frame(list(KATAKER = as.integer(names(KATAKER.key)), description = KATAKER.key))
     temp <- sp@data
     temp$KATAKER1.description <- kk.df$description[match(temp$KATAKER1, kk.df$KATAKER)]
@@ -164,12 +179,13 @@ get_HSY_data <- function (which.data=NULL, which.year=2013, data.dir=tempdir()) 
       sp[[nam]] <-  factor(iconv(sp[[nam]], from = "latin1", to = "UTF-8"))
   }
   
-  message("\nData loaded succesfully!")
+  if (verbose)
+    message("\nData loaded succesfully!")
   return(sp)
 }
 
 
-kataker.key <- function () {
+kataker_key <- function () {
   KATAKER.key <- c(
     "11"   = "Yhden asunnon talot", 
     "12"  = "Kahden asunnon talot", 
