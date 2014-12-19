@@ -35,7 +35,7 @@
 #' 
 #' @references See citation("helsinki") 
 #' @author Juuso Parkkinen \email{louhos@@googlegroups.com}
-#' @examples \donttest{ res.array <- get_hri_stats("aluesarjat_a03s_hki_vakiluku_aidinkieli") }
+#' @examples stats.array <- get_hri_stats("aluesarjat_a03s_hki_vakiluku_aidinkieli")
 
 get_hri_stats <- function (query="", verbose=TRUE) {
   
@@ -43,7 +43,7 @@ get_hri_stats <- function (query="", verbose=TRUE) {
   # implement grepping for resources? as in eurostat
   if (verbose)
     message("Accessing Helsinki Region Infoshare statistics API...")
-    
+  
   # Use the regional statistics API
   api.url <- "http://dev.hel.fi/stats/resources/"
   # For resources list
@@ -53,15 +53,22 @@ get_hri_stats <- function (query="", verbose=TRUE) {
   else
     query.url <- paste0(api.url, query, "/jsonstat")
   
+  # Check whether url available
+  if (!RCurl::url.exists(query.url)) {
+    message(paste("Sorry! Url", query.url, "not available!\nReturned NULL."))
+    return(NULL)
+  }
   # Access data with RCurl
   curl <- RCurl::getCurlHandle(cookiefile = "")
-  res.json <- RCurl::getForm(uri=query.url, curl=curl)
+  suppressWarnings(
+    res.json <- RCurl::getForm(uri=query.url, curl=curl)
+  )
   # Process json into a list
   res.list <- rjson::fromJSON(res.json)
   
   # Process and show list of resources
   if (query=="") {
-     resources <- names(res.list[["_embedded"]])
+    resources <- names(res.list[["_embedded"]])
     names(resources) <- sapply(res.list[["_embedded"]], function(x) x$metadata$label)
     if (verbose)
       message("Retrieved list of available resources.")
@@ -77,7 +84,7 @@ get_hri_stats <- function (query="", verbose=TRUE) {
     dims <- res.list$dataset$dimension$size
     names(dims) <- res.list$dataset$dimension$id
     dimnames <- lapply(res.list$dataset$dimension[3:(length(dims)+2)], function(x) {res=unlist(x$category$label); names(res)=NULL; res})
-
+    
     # Construct an array
     
     # For special characters:
@@ -85,19 +92,21 @@ get_hri_stats <- function (query="", verbose=TRUE) {
     #   .. (kaksi pistettä), tietoa ei ole saatu, se on liian epävarma ilmoitettavaksi tai se on salattu;
     # . (piste), loogisesti mahdoton esitettäväksi;
     # 0 (nolla), suure pienempi kuin puolet käytetystä yksiköstä.
+    # assign NA to ".", and ".."
     # => simple as.numeric() is fine, produces NA for "." and ".."
     
     # Have to reverse the dimensions, because in arrays
     # "The values in data are taken to be those in the array with the leftmost subscript moving fastest."
+    res.list$dataset$value[res.list$dataset$value %in% c(".", "..")] <- NA
     res.array <- array(data=as.numeric(res.list$dataset$value), dim=rev(dims), dimnames=rev(dimnames))
     if (verbose)
       message("Retrieved resource '",query,"'")
     return(res.array)
   }
-#   # Test that it works
-#   query <- "aluesarjat_a03s_hki_vakiluku_aidinkieli"
-#   hki.vakiluku <- get_hri_stats(query)
-#   library(reshape2)
-#   df <- reshape2::melt(hki.vakiluku)
+  #   # Test that it works
+  #   query <- "aluesarjat_a03s_hki_vakiluku_aidinkieli"
+  #   hki.vakiluku <- get_hri_stats(query)
+  #   library(reshape2)
+  #   df <- reshape2::melt(hki.vakiluku)
   
 }
