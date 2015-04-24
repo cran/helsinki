@@ -1,7 +1,7 @@
 # This file is a part of the helsinki package (http://github.com/rOpenGov/helsinki)
 # in association with the rOpenGov project (ropengov.github.io)
 
-# Copyright (C) 2010-2014 Juuso Parkkinen, Leo Lahti and Joona Lehtomäki / Louhos <louhos.github.com>. 
+# Copyright (C) 2010-2014 Juuso Parkkinen, Leo Lahti and Joona Lehtomaki / Louhos <louhos.github.com>. 
 # All rights reserved.
 
 # This program is open source software; you can redistribute it and/or modify 
@@ -37,6 +37,9 @@
 #' @keywords utilities
 
 get_hsy <- function (which.data=NULL, which.year=2013, data.dir=tempdir(), verbose=TRUE) {
+  
+  message("IMPORTANT NOTE! HSY open data services have been recently updated and get_hsy() function is outdated! It will be updated soon, meanwhile use the services directly at https://www.hsy.fi/fi/asiantuntijalle/avoindata/Sivut/default.aspx.")
+  return(NULL)
   
   if (is.null(which.data)) {
     message("Available HSY datasets:
