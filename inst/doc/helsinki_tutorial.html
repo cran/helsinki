@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="date" content="2017-02-18" />
+
+<title>Helsinki open data R tools</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Helsinki open data R tools</h1>
+<h4 class="date"><em>2017-02-18</em></h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#helsinki---tutorial">helsinki - tutorial</a><ul>
+<li><a href="#available-data-sources">Available data sources</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#helsinki-region-district-maps"><a name="aluejakokartat"></a>Helsinki region district maps</a></li>
+<li><a href="#helsinki-region-environmental-services"><a name="hsy"></a> Helsinki region environmental services</a><ul>
+<li><a href="#population-grid">Population grid</a></li>
+<li><a href="#helsinki-building-information">Helsinki building information</a></li>
+<li><a href="#helsinki-building-area-capacity">Helsinki building area capacity</a></li>
+</ul></li>
+<li><a href="#service-and-event-information"><a name="servicemap"></a>Service and event information</a></li>
+<li><a href="#helsinki-region-infoshare-statistics-api"><a name="hri_stats"></a> Helsinki Region Infoshare statistics API</a><ul>
+<li><a href="#citation">Citation</a></li>
+<li><a href="#session-info">Session info</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="helsinki---tutorial" class="section level1">
+<h1>helsinki - tutorial</h1>
+<p>This R package provides tools to access open data from the Helsinki region in Finland as part of the <a href="http://ropengov.github.io">rOpenGov</a> project.</p>
+<p>For contact information and source code, see the <a href="https://github.com/rOpenGov/helsinki">github page</a>.</p>
+<div id="available-data-sources" class="section level2">
+<h2>Available data sources</h2>
+<p><a href="#aluejakokartat">Helsinki region district maps</a> (Helsingin seudun aluejakokartat)</p>
+<ul>
+<li>Aluejakokartat: kunta, pien-, suur-, tilastoalueet (Helsinki region district maps)</li>
+<li>Äänestysaluejako: (Helsinki region election district maps)</li>
+<li>Source: <a href="http://ptp.hel.fi/avoindata/">Helsingin kaupungin Kiinteistövirasto (HKK)</a></li>
+</ul>
+<p>Helsinki Real Estate Department (HKK:n avointa dataa)</p>
+<ul>
+<li>Spatial data from <a href="http://ptp.hel.fi/avoindata/">Helsingin kaupungin Kiinteistövirasto (HKK)</a> availabe in the <a href="https://github.com/rOpenGov/gisfin">gisfin</a> package, see <a href="https://github.com/rOpenGov/gisfin/blob/master/vignettes/gisfin_tutorial.md">gisfin tutorial</a> for examples</li>
+</ul>
+<p><a href="#hsy">Helsinki region environmental services</a> (HSY:n avointa dataa)</p>
+<ul>
+<li>Väestötietoruudukko (population grid)</li>
+<li>Rakennustietoruudukko (building information grid)</li>
+<li>SeutuRAMAVA (building land resource information(?))</li>
+<li>Source: Helsingin seudun ympäristöpalvelut, HSY</li>
+</ul>
+<p><a href="#servicemap">Service and event information</a></p>
+<ul>
+<li><a href="http://api.hel.fi/servicemap/v1/">Helsinki region Service Map API</a> (Pääkaupunkiseudun Palvelukartta)</li>
+<li><a href="http://api.hel.fi/linkedevents/v0.1/">Helsinki Linked Event API</a></li>
+</ul>
+<p><a href="#hri_stats">Helsinki Region Infoshare statistics API</a></p>
+<ul>
+<li><a href="http://www.aluesarjat.fi/">Aluesarjat (original source)</a> (regional time series data)</li>
+<li>Source: <a href="http://dev.hel.fi/stats/">Helsinki Region Infoshare statistics API</a></li>
+</ul>
+<p>List of potential data sources to be added to the package can be found <a href="todo-datasets.Rmd">here</a>.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>Release version for general users:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;helsinki&quot;</span>)</code></pre></div>
+<p>Development version for developers:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
+<span class="kw">library</span>(devtools)
+<span class="kw">install_github</span>(<span class="st">&quot;helsinki&quot;</span>, <span class="st">&quot;ropengov&quot;</span>)</code></pre></div>
+<p>Load package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(helsinki)</code></pre></div>
+</div>
+<div id="helsinki-region-district-maps" class="section level2">
+<h2><a name="aluejakokartat"></a>Helsinki region district maps</h2>
+<p>Helsinki region district maps (Helsingin seudun aluejakokartat) and election maps (äänestysalueet) from <a href="http://ptp.hel.fi/avoindata/">Helsingin kaupungin Kiinteistövirasto (HKK)</a> are available in the helsinki package with <code>data(aluejakokartat)</code>. The data are available as both spatial object (<code>sp</code>) and data frame (<code>df</code>). These are preprocessed in the <a href="https://github.com/rOpenGov/gisfin">gisfin</a> package, and more examples can be found in the <a href="https://github.com/rOpenGov/gisfin/blob/master/vignettes/gisfin_tutorial.md">gisfin tutorial</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load aluejakokartat and study contents</span>
+<span class="kw">data</span>(aluejakokartat)
+<span class="kw">str</span>(aluejakokartat, <span class="dt">m=</span><span class="dv">2</span>)</code></pre></div>
+<pre><code>## List of 2
+##  $ sp:List of 8
+##   ..$ kunta            :Formal class 'SpatialPolygonsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ pienalue         :Formal class 'SpatialPolygonsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ pienalue_piste   :Formal class 'SpatialPointsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ suuralue         :Formal class 'SpatialPolygonsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ suuralue_piste   :Formal class 'SpatialPointsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ tilastoalue      :Formal class 'SpatialPolygonsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ tilastoalue_piste:Formal class 'SpatialPointsDataFrame' [package &quot;sp&quot;] with 5 slots
+##   ..$ aanestysalue     :Formal class 'SpatialPolygonsDataFrame' [package &quot;sp&quot;] with 5 slots
+##  $ df:List of 8
+##   ..$ kunta            :'data.frame':    1664 obs. of  7 variables:
+##   ..$ pienalue         :'data.frame':    33594 obs. of  7 variables:
+##   ..$ pienalue_piste   :'data.frame':    295 obs. of  3 variables:
+##   ..$ suuralue         :'data.frame':    6873 obs. of  7 variables:
+##   ..$ suuralue_piste   :'data.frame':    23 obs. of  3 variables:
+##   ..$ tilastoalue      :'data.frame':    17279 obs. of  7 variables:
+##   ..$ tilastoalue_piste:'data.frame':    125 obs. of  3 variables:
+##   ..$ aanestysalue     :'data.frame':    35349 obs. of  11 variables:</code></pre>
+</div>
+<div id="helsinki-region-environmental-services" class="section level2">
+<h2><a name="hsy"></a> Helsinki region environmental services</h2>
+<p>Retrieve data from Helsingin seudun ympäristöpalvelut (HSY) with <code>get_hsy()</code>.</p>
+<div id="population-grid" class="section level3">
+<h3>Population grid</h3>
+<p>Population grid (väestötietoruudukko) with 250m x 250m grid size in year 2013 contains the number of people in different age groups. The most rarely populated grids are left out (0-4 persons), and grids with less than 99 persons are censored with ‘99’ to guarantee privacy.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sp.vaesto &lt;-<span class="st"> </span><span class="kw">get_hsy</span>(<span class="dt">which.data=</span><span class="st">&quot;Vaestotietoruudukko&quot;</span>, <span class="dt">which.year=</span><span class="dv">2013</span>)
+<span class="kw">head</span>(sp.vaesto@data)</code></pre></div>
+</div>
+<div id="helsinki-building-information" class="section level3">
+<h3>Helsinki building information</h3>
+<p>Building information grid (rakennustietoruudukko) in Helsinki region on grid-level (500m x 500m): building counts (lukumäärä), built area (kerrosala), usage (käyttötarkoitus), and region efficiency (aluetehokkuus).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sp.rakennus &lt;-<span class="st"> </span><span class="kw">get_hsy</span>(<span class="dt">which.data=</span><span class="st">&quot;Rakennustietoruudukko&quot;</span>, <span class="dt">which.year=</span><span class="dv">2013</span>)  
+<span class="kw">head</span>(sp.rakennus@data)</code></pre></div>
+</div>
+<div id="helsinki-building-area-capacity" class="section level3">
+<h3>Helsinki building area capacity</h3>
+<p>Building area capacity per municipal region (kaupunginosittain summattua tietoa rakennusmaavarannosta). Plot with number of buildlings with <code>spplot()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sp.ramava &lt;-<span class="st"> </span><span class="kw">get_hsy</span>(<span class="dt">which.data=</span><span class="st">&quot;SeutuRAMAVA_tila&quot;</span>, <span class="dt">which.year=</span><span class="dv">2013</span>)  
+<span class="kw">head</span>(sp.ramava@data)
+<span class="co"># Values with less than five units are given as 999999999, set those to zero</span>
+sp.ramava@data[sp.ramava@data==<span class="dv">999999999</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="co"># Plot number of buildings for each region</span>
+<span class="kw">spplot</span>(sp.ramava, <span class="dt">zcol=</span><span class="st">&quot;RAKLKM&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Number of buildings in each 'tilastoalue'&quot;</span>, <span class="dt">col.regions=</span><span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">'blue'</span>, <span class="st">'gray80'</span>, <span class="st">'red'</span>))(<span class="dv">100</span>))</code></pre></div>
+</div>
+</div>
+<div id="service-and-event-information" class="section level2">
+<h2><a name="servicemap"></a>Service and event information</h2>
+<p>Function <code>get_servicemap()</code> retrieves regional service data from the new <a href="http://api.hel.fi/servicemap/v1/">Service Map API</a>, that contains data from the <a href="http://dev.hel.fi/servicemap/">Service Map</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Search for &quot;puisto&quot; (park) (specify q=&quot;query&quot;)</span>
+search.puisto &lt;-<span class="st"> </span><span class="kw">get_servicemap</span>(<span class="dt">query=</span><span class="st">&quot;search&quot;</span>, <span class="dt">q=</span><span class="st">&quot;puisto&quot;</span>)
+<span class="co"># Study results</span>
+<span class="kw">str</span>(search.puisto, <span class="dt">m=</span><span class="dv">1</span>)</code></pre></div>
+<pre><code>## List of 4
+##  $ count   : num 1891
+##  $ next    : chr &quot;http://api.hel.fi/servicemap/v1/search/?page=2&amp;q=puisto&quot;
+##  $ previous: NULL
+##  $ results :List of 20</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># A lot of results found (count &gt; 1000)</span>
+<span class="co"># Get names for the first 20 results</span>
+<span class="kw">sapply</span>(search.puisto$results, function(x) x$name$fi)</code></pre></div>
+<pre><code>##  [1] &quot;Mankkaan asukaspuisto&quot;              
+##  [2] &quot;Tapiolan asukaspuisto&quot;              
+##  [3] &quot;Hurtigin puisto&quot;                    
+##  [4] &quot;Olarin asukaspuisto&quot;                
+##  [5] &quot;Perkkaan asukaspuisto&quot;              
+##  [6] &quot;Kaupungintalon puisto&quot;              
+##  [7] &quot;Matinkylän asukaspuisto&quot;            
+##  [8] &quot;Kylätalo Palttinan asukaspuisto&quot;    
+##  [9] &quot;Asematien puisto&quot;                   
+## [10] &quot;Karakallion asukaspuisto&quot;           
+## [11] &quot;Suvelan asukaspuisto&quot;               
+## [12] &quot;Leppävaaran asukaspuisto&quot;           
+## [13] &quot;Viherkallion asukaspuisto&quot;          
+## [14] &quot;Stenbergin puisto&quot;                  
+## [15] &quot;Kasavuoren puisto&quot;                  
+## [16] &quot;Nurmilinnunpuisto&quot;                  
+## [17] &quot;Itärannan puisto/ Otsonlahdenpuisto&quot;
+## [18] &quot;Kotitontunpuisto&quot;                   
+## [19] &quot;Marketanpuisto&quot;                     
+## [20] &quot;Niittykummunpuisto&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># See what data is given for one service</span>
+<span class="kw">names</span>(search.puisto$results[[<span class="dv">1</span>]])</code></pre></div>
+<pre><code>##  [1] &quot;id&quot;                        &quot;connections&quot;              
+##  [3] &quot;accessibility_properties&quot;  &quot;identifiers&quot;              
+##  [5] &quot;data_source_url&quot;           &quot;name&quot;                     
+##  [7] &quot;description&quot;               &quot;provider_type&quot;            
+##  [9] &quot;street_address&quot;            &quot;address_zip&quot;              
+## [11] &quot;phone&quot;                     &quot;email&quot;                    
+## [13] &quot;www_url&quot;                   &quot;address_postal_full&quot;      
+## [15] &quot;extensions&quot;                &quot;picture_url&quot;              
+## [17] &quot;picture_caption&quot;           &quot;origin_last_modified_time&quot;
+## [19] &quot;root_services&quot;             &quot;department&quot;               
+## [21] &quot;organization&quot;              &quot;municipality&quot;             
+## [23] &quot;services&quot;                  &quot;divisions&quot;                
+## [25] &quot;keywords&quot;                  &quot;location&quot;                 
+## [27] &quot;object_type&quot;               &quot;score&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># More results could be retrieved by specifying 'page=2' etc.</span></code></pre></div>
+<p>Function <code>get_linkedevents()</code> retrieves regional event data from the new <a href="http://api.hel.fi/linkedevents/v0.1/">Linked Events API</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Searh for current events</span>
+events &lt;-<span class="st"> </span><span class="kw">get_linkedevents</span>(<span class="dt">query=</span><span class="st">&quot;event&quot;</span>)
+<span class="co"># Get names for the first 20 results</span>
+<span class="kw">sapply</span>(events$data, function(x) x$name$fi)</code></pre></div>
+<pre><code>##  [1] &quot;Ennakkoluulijat&quot;                  &quot;Pieni alkusoitto&quot;                
+##  [3] &quot;Pieni alkusoitto&quot;                 &quot;Pieni alkusoitto&quot;                
+##  [5] &quot;Muusikkotapaaminen&quot;               &quot;Pieni alkusoitto&quot;                
+##  [7] &quot;Muusikkotapaaminen&quot;               &quot;Ennakkoluulijat&quot;                 
+##  [9] &quot;Pieni alkusoitto&quot;                 &quot;Pieni alkusoitto&quot;                
+## [11] &quot;Muusikkotapaaminen&quot;               &quot;Ennakkoluulijat&quot;                 
+## [13] &quot;Pieni alkusoitto&quot;                 &quot;Pieni alkusoitto&quot;                
+## [15] &quot;Ennakkoluulijat&quot;                  &quot;Yhdessä!-kamarimusiikkikonsertti&quot;
+## [17] &quot;Kamarimusiikkia kaupungintalolla&quot; &quot;Kamarimusiikkia kaupungintalolla&quot;
+## [19] &quot;Kenraaliharjoitus&quot;                &quot;Kenraaliharjoitus&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># See what data is given for the first event</span>
+<span class="kw">names</span>(events$data[[<span class="dv">1</span>]])</code></pre></div>
+<pre><code>##  [1] &quot;id&quot;                  &quot;location&quot;            &quot;keywords&quot;           
+##  [4] &quot;super_event&quot;         &quot;event_status&quot;        &quot;external_links&quot;     
+##  [7] &quot;offers&quot;              &quot;data_source&quot;         &quot;publisher&quot;          
+## [10] &quot;sub_events&quot;          &quot;in_language&quot;         &quot;audience&quot;           
+## [13] &quot;custom_data&quot;         &quot;origin_id&quot;           &quot;created_time&quot;       
+## [16] &quot;last_modified_time&quot;  &quot;date_published&quot;      &quot;start_time&quot;         
+## [19] &quot;end_time&quot;            &quot;super_event_type&quot;    &quot;provider&quot;           
+## [22] &quot;location_extra_info&quot; &quot;description&quot;         &quot;info_url&quot;           
+## [25] &quot;headline&quot;            &quot;short_description&quot;   &quot;name&quot;               
+## [28] &quot;secondary_headline&quot;  &quot;@id&quot;                 &quot;@context&quot;           
+## [31] &quot;@type&quot;               &quot;image&quot;</code></pre>
+</div>
+<div id="helsinki-region-infoshare-statistics-api" class="section level2">
+<h2><a name="hri_stats"></a> Helsinki Region Infoshare statistics API</h2>
+<p>Function <code>get_hri_stats()</code> retrieves data from the <a href="http://dev.hel.fi/stats/">Helsinki Region Infoshare statistics API</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Retrieve list of available data</span>
+stats.list &lt;-<span class="st"> </span><span class="kw">get_hri_stats</span>(<span class="dt">query=</span><span class="st">&quot;&quot;</span>)
+<span class="co"># Show first results</span>
+<span class="kw">head</span>(stats.list)</code></pre></div>
+<pre><code>##                                      NULL 
+##             &quot;L113_viheralue_kaupunginosa&quot; 
+##                                      NULL 
+##                      &quot;L32_yksikkopaastot&quot; 
+##                                      NULL 
+##                   &quot;J1_loppusijoitettavat&quot; 
+##                                      NULL 
+##                    &quot;I13_maailman_paastot&quot; 
+##                                      NULL 
+##       &quot;J13_sekajatteen_maara_kiinteistot&quot; 
+##  Helsingin väestö äidinkielen mukaan 1.1. 
+## &quot;aluesarjat_a03s_hki_vakiluku_aidinkieli&quot;</code></pre>
+<p>Specify a dataset to retrieve. The output is currently a three-dimensional array.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Retrieve a specific dataset</span>
+stats.res &lt;-<span class="st"> </span><span class="kw">get_hri_stats</span>(<span class="dt">query=</span>stats.list[<span class="dv">1</span>])
+<span class="co"># Show the structure of the results</span>
+<span class="kw">str</span>(stats.res)</code></pre></div>
+<pre><code>##  num [1:6, 1:34] 11606 5607 2.07 0.65 0.15 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ muuttuja  : chr [1:6] &quot;Asukkaita&quot; &quot;Asukastiheys (hlö/km2)&quot; &quot;Maapinta-ala (km2)&quot; &quot;Viheralueiden pinta-ala (km2)&quot; ...
+##   ..$ peruspiiri: chr [1:34] &quot;Vironniemi&quot; &quot;Ullanlinna&quot; &quot;Kampinmalmi&quot; &quot;Taka-Töölö&quot; ...</code></pre>
+<p>The implementation will be updated and more examples will be added in the near future.</p>
+<div id="citation" class="section level3">
+<h3>Citation</h3>
+<p>**Citing the <a href="data:**" class="uri">data:**</a> See <code>help()</code> to get citation information for each data source individually.</p>
+<p><strong>Citing the R package:</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">citation</span>(<span class="st">&quot;helsinki&quot;</span>)</code></pre></div>
+<pre><code>
+Kindly cite the helsinki R package as follows:
+
+  (C) Juuso Parkkinen, Leo Lahti and Joona Lehtomaki 2014.
+  helsinki R package
+
+A BibTeX entry for LaTeX users is
+
+  @Misc{,
+    title = {helsinki R package},
+    author = {Juuso Parkkinen and Leo Lahti and Joona Lehtomaki},
+    year = {2014},
+  }
+
+Many thanks for all contributors! For more info, see:
+https://github.com/rOpenGov/helsinki</code></pre>
+</div>
+<div id="session-info" class="section level3">
+<h3>Session info</h3>
+<p>This vignette was created with</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
+<pre><code>## R version 3.3.2 (2016-10-31)
+## Platform: x86_64-apple-darwin13.4.0 (64-bit)
+## Running under: macOS Sierra 10.12.3
+## 
+## locale:
+## [1] C/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] helsinki_0.9.29 RCurl_1.95-4.8  bitops_1.0-6    maptools_0.8-39
+## [5] sp_1.2-3       
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.12.9     lattice_0.20-34 digest_0.6.12   grid_3.3.2     
+##  [5] magrittr_1.5    evaluate_0.10   stringi_1.1.2   rmarkdown_0.9.6
+##  [9] rjson_0.2.15    tools_3.3.2     stringr_1.1.0   foreign_0.8-67 
+## [13] yaml_2.1.14     htmltools_0.3.5 knitr_1.15.1</code></pre>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
