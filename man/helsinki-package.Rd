@@ -2,8 +2,8 @@
 % Please edit documentation in R/helsinki-package.R
 \docType{package}
 \name{helsinki-package}
-\alias{helsinki}
 \alias{helsinki-package}
+\alias{helsinki}
 \title{Helsinki open data R tools}
 \description{
 Brief summary of the helsinki package
@@ -13,8 +13,8 @@ Brief summary of the helsinki package
 Package: \tab helsinki\cr
 Type: \tab Package\cr
 Version: \tab See sessionInfo() or DESCRIPTION file\cr
-Date: \tab 2014\cr
-License: \tab FreeBSD\cr
+Date: \tab 2013-2021\cr
+License: \tab BSD-2-Clause\cr
 LazyLoad: \tab yes\cr
 }
 
@@ -23,12 +23,11 @@ Tools for accessing various open data sources in the Helsinki region in Finland.
 \examples{
 # library(helsinki)
 }
-\author{
-Juuso Parkkinen, Leo Lahti and Joona Lehtomaki \email{louhos@googlegroups.com}
-}
 \references{
 See citation("helsinki")
 \url{https://github.com/rOpenGov/helsinki}
 }
+\author{
+Juuso Parkkinen, Leo Lahti, Joona Lehtomaki and Pyry Kantanen \email{louhos@googlegroups.com}
+}
 \keyword{package}
-

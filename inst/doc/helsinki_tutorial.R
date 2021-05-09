@@ -1,78 +1,129 @@
-## ----knit, eval=FALSE, echo=FALSE----------------------------------------
-#  # Hot to knit this document into .md and .html
-#  library(knitr)
-#  opts_knit$set(base.dir = "vignettes") # Change the base dir where to save figures
-#  knit(input="vignettes/helsinki_tutorial.Rmd", output="vignettes/helsinki_tutorial.md")
-#  knit2html(input="vignettes/helsinki_tutorial.md", output="vignettes/helsinki_tutorial.html", options=c("use_xhtml","smartypants","mathjax","highlight_code"))
-#  file.remove("helsinki_tutorial.txt") # Fix to remove from the output
+## ----setup, include = FALSE---------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE, 
+  warning = FALSE,
+  fig.height = 7, 
+  fig.width = 7,
+  dpi = 75
+)
 
-## ----install, eval=FALSE-------------------------------------------------
+## ----install_default, eval=FALSE----------------------------------------------
 #  install.packages("helsinki")
 
-## ----install2, eval=FALSE------------------------------------------------
-#  install.packages("devtools")
-#  library(devtools)
-#  install_github("helsinki", "ropengov")
+## ----install_remotes, eval=FALSE----------------------------------------------
+#  library(remotes)
+#  remotes::install_github("ropengov/helsinki")
 
-## ----load, message=FALSE, warning=FALSE, results='hide'------------------
+## ----load, message=FALSE, warning=FALSE, results='hide'-----------------------
 library(helsinki)
 
-## ----aluejako_data, message=FALSE----------------------------------------
+## ----wfs1, eval = TRUE--------------------------------------------------------
+url <- "https://kartta.hsy.fi/geoserver/wfs"
+
+hsy_features <- get_feature_list(base.url = url)
+feature_of_interest <- hsy_features$Name[20]
+# Location of waterposts
+feature_of_interest
+
+## ----wfs2, eval = TRUE--------------------------------------------------------
+# downloading a feature
+waterposts <- get_feature(base.url = url, typename = feature_of_interest)
+# Visualizing the location of waterposts
+plot(waterposts$geom)
+
+## ----wfs3, eval = FALSE-------------------------------------------------------
+#  # Standard use
+#  selected_feature <- select_feature(base.url = url)
+#  feature <- get_feature(base.url = url, typename = selected_feature)
+#  
+#  # Skipping a redundant step with parameter get = TRUE
+#  feature <- select_feature(base.url = url, get = TRUE)
+
+## ----get_hsy_examples, eval = TRUE--------------------------------------------
+pop_grid <- get_vaestotietoruudukko(year = 2018)
+building_grid <- get_rakennustietoruudukko(year = 2016)
+
+library(ggplot2)
+
+# Logarithmic scales to make the visualizations more discernible
+ggplot(pop_grid) + geom_sf(aes(colour=log(asukkaita), fill=log(asukkaita)))
+ggplot(building_grid) + geom_sf(aes(colour=log(kerala_yht), fill=log(kerala_yht)))
+
+## ----servicemap, message=FALSE, warning=FALSE---------------------------------
+# Search for "puisto" (park) (specify q="query")
+search_puisto <- get_servicemap(query="search", q="puisto")
+# Study results: 47 variables in the data frame
+str(search_puisto, max.level = 1)
+
+## -----------------------------------------------------------------------------
+# Get names for the first 20 results
+search_puisto$results$name$fi
+
+# See what kind of data is given for services
+names(search_puisto$results)
+
+## -----------------------------------------------------------------------------
+search_puisto <- get_servicemap(query="search", q="puisto", page_size = 30, page = 2)
+search_puisto$results$name$fi
+
+## -----------------------------------------------------------------------------
+# Search for padel-related services in Helsinki
+search_padel <- get_servicemap(query="search", input="padel", only="unit.name, unit.location.coordinates, unit.street_address", municipality="helsinki")
+search_padel$results
+
+## ----linkedevents, message=FALSE, warning=FALSE-------------------------------
+# Search for current events
+events <- get_linkedevents(query="event")
+# Get names for the first 20 results
+events$data$name$fi
+# See what kind of data is given for events
+names(events$data)
+
+## ----maps1, eval = TRUE-------------------------------------------------------
+helsinki <- get_city_map(city = "helsinki", level = "suuralue")
+espoo <- get_city_map(city = "espoo", level = "suuralue")
+vantaa <- get_city_map(city = "vantaa", level = "suuralue")
+kauniainen <- get_city_map(city = "kauniainen", level = "suuralue")
+
+library(ggplot2)
+
+ggplot() +
+  geom_sf(data = helsinki) +
+  geom_sf(data = espoo) +
+  geom_sf(data = vantaa) +
+  geom_sf(data = kauniainen) +
+  geom_sf(data = waterposts)
+
+## ----maps2, eval=FALSE--------------------------------------------------------
+#  library(sf)
+#  map <- get_city_map(city = "helsinki", level = "suuralue")
+#  plot(sf::st_geometry(map))
+#  
+#  voting_district <- get_city_map(city = "helsinki", level = "aanestysalue")
+#  plot(sf::st_geometry(voting_district))
+
+## ----maps3, message=FALSE-----------------------------------------------------
 # Load aluejakokartat and study contents
 data(aluejakokartat)
 str(aluejakokartat, m=2)
 
-## ----hsy_vaesto, warning=FALSE, eval=FALSE-------------------------------
-#  sp.vaesto <- get_hsy(which.data="Vaestotietoruudukko", which.year=2013)
-#  head(sp.vaesto@data)
-
-## ----hsy_rakennus, warning=FALSE, eval=FALSE-----------------------------
-#  sp.rakennus <- get_hsy(which.data="Rakennustietoruudukko", which.year=2013)
-#  head(sp.rakennus@data)
-
-## ----hsy_ramava, warning=FALSE, eval=FALSE-------------------------------
-#  sp.ramava <- get_hsy(which.data="SeutuRAMAVA_tila", which.year=2013)
-#  head(sp.ramava@data)
-#  # Values with less than five units are given as 999999999, set those to zero
-#  sp.ramava@data[sp.ramava@data==999999999] <- 0
-#  # Plot number of buildings for each region
-#  spplot(sp.ramava, zcol="RAKLKM", main="Number of buildings in each 'tilastoalue'", col.regions=colorRampPalette(c('blue', 'gray80', 'red'))(100))
-
-## ----servicemap, message=FALSE, warning=FALSE----------------------------
-# Search for "puisto" (park) (specify q="query")
-search.puisto <- get_servicemap(query="search", q="puisto")
-# Study results
-str(search.puisto, m=1)
-# A lot of results found (count > 1000)
-# Get names for the first 20 results
-sapply(search.puisto$results, function(x) x$name$fi)
-# See what data is given for one service
-names(search.puisto$results[[1]])
-# More results could be retrieved by specifying 'page=2' etc.
-
-## ----linkedevents, message=FALSE, warning=FALSE--------------------------
-# Searh for current events
-events <- get_linkedevents(query="event")
-# Get names for the first 20 results
-sapply(events$data, function(x) x$name$fi)
-# See what data is given for the first event
-names(events$data[[1]])
-
-## ----hri_stats1, message=FALSE, warning=FALSE----------------------------
+## ----hri_stats1, message=FALSE, warning=FALSE---------------------------------
 # Retrieve list of available data
-stats.list <- get_hri_stats(query="")
+stats_list <- get_hri_stats(query="")
 # Show first results
-head(stats.list)
+head(stats_list)
 
-## ----hri_stats2, message=FALSE, warning=FALSE----------------------------
+## ----hri_stats2, message=FALSE, warning=FALSE---------------------------------
 # Retrieve a specific dataset
-stats.res <- get_hri_stats(query=stats.list[1])
+stats_res <- get_hri_stats(query=stats_list[1])
 # Show the structure of the results
-str(stats.res)
+str(stats_res)
 
-## ----citation, comment=NA------------------------------------------------
+## ----citation, comment=NA-----------------------------------------------------
 citation("helsinki")
 
-## ----sessioninfo, message=FALSE, warning=FALSE---------------------------
+## ----sessioninfo, message=FALSE, warning=FALSE--------------------------------
 sessionInfo()
 
