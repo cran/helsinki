@@ -23,9 +23,11 @@ library(helsinki)
 url <- "https://kartta.hsy.fi/geoserver/wfs"
 
 hsy_features <- get_feature_list(base.url = url)
-feature_of_interest <- hsy_features$Name[20]
-# Location of waterposts
-feature_of_interest
+# Select only features which are related to water utilities and services
+hsy_vesihuolto <- hsy_features[which(hsy_features$Namespace == "vesihuolto"),]
+hsy_vesihuolto
+# We select our feature of interest from this list: Location of waterposts
+feature_of_interest <- "vesihuolto:VH_Vesipostit_HSY"
 
 ## ----wfs2, eval = TRUE--------------------------------------------------------
 # downloading a feature
@@ -34,7 +36,7 @@ waterposts <- get_feature(base.url = url, typename = feature_of_interest)
 plot(waterposts$geom)
 
 ## ----wfs3, eval = FALSE-------------------------------------------------------
-#  # Standard use
+#  # Interactive example with select_feature
 #  selected_feature <- select_feature(base.url = url)
 #  feature <- get_feature(base.url = url, typename = selected_feature)
 #  
@@ -43,7 +45,7 @@ plot(waterposts$geom)
 
 ## ----get_hsy_examples, eval = TRUE--------------------------------------------
 pop_grid <- get_vaestotietoruudukko(year = 2018)
-building_grid <- get_rakennustietoruudukko(year = 2016)
+building_grid <- get_rakennustietoruudukko(year = 2020)
 
 library(ggplot2)
 

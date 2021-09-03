@@ -4,10 +4,13 @@
 \alias{get_feature_list}
 \title{Print all available Features}
 \usage{
-get_feature_list(base.url = NULL)
+get_feature_list(base.url = NULL, queries = "request=GetCapabilities")
 }
 \arguments{
-\item{base.url}{a WFS url, for example "https://kartta.hsy.fi/geoserver/wfs"}
+\item{base.url}{WFS url, for example "https://kartta.hsy.fi/geoserver/wfs"}
+
+\item{queries}{desired query for acquiring the list of features, default 
+is "request=GetCapabilities"}
 }
 \value{
 data frame
